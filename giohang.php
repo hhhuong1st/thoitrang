@@ -87,7 +87,11 @@ $tong_cong = 0;
                 <h3>Thông tin giao hàng</h3>
                 <div class="form-group">
                     <label>Họ và tên người nhận</label>
-                    <input type="text" name="ten" placeholder="Nhập đầy đủ họ tên" required>
+                    <?php 
+                        // Lấy tên từ session nếu đã đăng nhập, nếu chưa thì để trống
+                        $ten_mac_dinh = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; 
+                    ?>
+                    <input type="text" name="ten" value="<?php echo htmlspecialchars($ten_mac_dinh); ?>" placeholder="Nhập đầy đủ họ tên" required>
                 </div>
                 <div class="form-group">
                     <label>Số điện thoại</label>

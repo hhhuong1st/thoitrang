@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2026 at 08:10 AM
+-- Generation Time: Mar 18, 2026 at 08:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -133,6 +133,27 @@ INSERT INTO `san_pham` (`ma_sp`, `ten_sp`, `Gia_ban`, `size`, `so_luong`, `ma_dm
 (4, 'Áo thun nam', 50000.00, 'M', 0, 1, 'ao-thun-nam.jpg'),
 (5, 'Áo Tank Top', 100000.00, 'S', 1, 2, 'ao-tanktop.png');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tai_khoan`
+--
+
+CREATE TABLE `tai_khoan` (
+  `id` int(11) NOT NULL,
+  `ho_ten` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `mat_khau` varchar(255) NOT NULL,
+  `ngay_tao` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tai_khoan`
+--
+
+INSERT INTO `tai_khoan` (`id`, `ho_ten`, `email`, `mat_khau`, `ngay_tao`) VALUES
+(1, 'Huỳnh Huyền Hương', 'hhh@123', '$2y$10$Hj9s6uFBA0gPXvSKwMN4FOU0e3dcO2kewCQjlAUuXjttgJOSYXzGi', '2026-03-18 14:21:02');
+
 --
 -- Indexes for dumped tables
 --
@@ -169,6 +190,13 @@ ALTER TABLE `san_pham`
   ADD KEY `ma_dm` (`ma_dm`);
 
 --
+-- Indexes for table `tai_khoan`
+--
+ALTER TABLE `tai_khoan`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -201,6 +229,12 @@ ALTER TABLE `khach_hang`
 --
 ALTER TABLE `san_pham`
   MODIFY `ma_sp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `tai_khoan`
+--
+ALTER TABLE `tai_khoan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

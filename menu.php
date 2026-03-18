@@ -108,8 +108,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div class="header-right">
         <input type="text" class="search-box" placeholder="Tìm kiếm...">
 
-        <a href="taikhoan.php">
+        <a href="tai_khoan.php" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: #333; font-weight: bold; font-size: 14px;">
             <img src="images/icon-account.png" alt="Tài khoản" title="Tài khoản của tôi">
+            <?php if(isset($_SESSION['user_name'])): ?>
+                <span>Chào, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+            <?php endif; ?>
         </a>
 
         <a href="giohang.php" class="cart-wrapper">
