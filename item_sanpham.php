@@ -43,8 +43,8 @@
     </div>
     
     <?php if(isset($_SESSION['user_name'])): ?>
-        <a href="giohang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=mua" class="btn-mua">Mua ngay</a>
-        <a href="giohang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=them" class="btn-them" onclick="alert('Đã thêm sản phẩm vào giỏ hàng thành công!')">Thêm vào giỏ hàng</a>
+        <a href="gio_hang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=mua" class="btn-mua">Mua ngay</a>
+        <a href="gio_hang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=them" class="btn-them" onclick="alert('Đã thêm sản phẩm vào giỏ hàng thành công!')">Thêm vào giỏ hàng</a>
     <?php else: ?>
         <a href="tai_khoan.php" class="btn-mua" onclick="alert('Bạn cần đăng nhập để mua sản phẩm này!');">Mua ngay</a>
         <a href="tai_khoan.php" class="btn-them" onclick="alert('Bạn cần đăng nhập để thêm vào giỏ hàng!');">Thêm vào giỏ hàng</a>

@@ -16,24 +16,24 @@ $user_data = mysqli_fetch_assoc($user_query);
 // Logic xử lý giỏ hàng (giữ nguyên các phần xóa/thêm)
 if (isset($_GET['xoa_id'])) {
     $id_xoa = $_GET['xoa_id'];
-    unset($_SESSION['giohang'][$id_xoa]);
-    header("Location: giohang.php"); exit();
+    unset($_SESSION['gio_hang'][$id_xoa]);
+    header("Location: gio_hang.php"); exit();
 }
 if (isset($_GET['xoa']) && $_GET['xoa'] == 'tatca') {
-    unset($_SESSION['giohang']); header("Location: giohang.php"); exit();
+    unset($_SESSION['gio_hang']); header("Location: gio_hang.php"); exit();
 }
 if (isset($_GET['them_id'])) {
     $id = $_GET['them_id'];
     $sql_kho = "SELECT so_luong FROM san_pham WHERE ma_sp = $id";
     $res_kho = mysqli_query($conn, $sql_kho);
     $row_kho = mysqli_fetch_assoc($res_kho);
-    $sl_muon_them = (isset($_SESSION['giohang'][$id]) ? $_SESSION['giohang'][$id] : 0) + 1;
+    $sl_muon_them = (isset($_SESSION['gio_hang'][$id]) ? $_SESSION['gio_hang'][$id] : 0) + 1;
     if ($sl_muon_them > $row_kho['so_luong']) {
         echo "<script>alert('Kho không đủ hàng!'); window.location.href = '".$_SERVER['HTTP_REFERER']."';</script>"; exit();
     } else {
-        $_SESSION['giohang'][$id] = $sl_muon_them;
+        $_SESSION['gio_hang'][$id] = $sl_muon_them;
     }
-    header("Location: giohang.php"); exit();
+    header("Location: gio_hang.php"); exit();
 }
 
 $tong_cong = 0;
@@ -60,7 +60,7 @@ $tong_cong = 0;
 </head>
 <body>
     <?php include 'menu.php'; ?>
-    <?php if (!empty($_SESSION['giohang'])): ?>
+    <?php if (!empty($_SESSION['gio_hang'])): ?>
     <form action="hoan_tat_thanh_toan.php" method="post">
         <div class="main-container">
             <div class="col-left">
@@ -83,9 +83,9 @@ $tong_cong = 0;
                 </label>
             </div>
             <div class="col-right">
-                <h3>Đơn hàng (<?php echo array_sum($_SESSION['giohang']); ?> món)</h3>
+                <h3>Đơn hàng (<?php echo array_sum($_SESSION['gio_hang']); ?> món)</h3>
                 <table class="summary-table">
-                    <?php foreach ($_SESSION['giohang'] as $id_sp => $so_luong): 
+                    <?php foreach ($_SESSION['gio_hang'] as $id_sp => $so_luong): 
                         $res = mysqli_query($conn, "SELECT * FROM san_pham WHERE ma_sp = $id_sp");
                         $row = mysqli_fetch_assoc($res);
                         $thanh_tien = $row['gia_ban'] * $so_luong; $tong_cong += $thanh_tien; ?>

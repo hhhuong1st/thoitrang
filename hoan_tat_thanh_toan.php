@@ -3,7 +3,7 @@ session_start();
 include 'ket_noi.php';
 
 // Kiểm tra nếu chưa đăng nhập hoặc giỏ hàng trống thì không cho phép thanh toán
-if (!isset($_SESSION['user_id']) || empty($_SESSION['giohang'])) {
+if (!isset($_SESSION['user_id']) || empty($_SESSION['gio_hang'])) {
     header("Location: index.php");
     exit();
 }
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tong_tien = 0;
 
     // 2. Tính toán tổng giá trị đơn hàng (Sử dụng gia_ban chữ thường)
-    foreach ($_SESSION['giohang'] as $id_sp => $so_luong) {
+    foreach ($_SESSION['gio_hang'] as $id_sp => $so_luong) {
         $sql_gia = "SELECT gia_ban FROM san_pham WHERE ma_sp = $id_sp";
         $res_gia = mysqli_query($conn, $sql_gia);
         if ($row_gia = mysqli_fetch_assoc($res_gia)) {
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // ----------------------------------------------
 
         // 4. Chèn vào bảng chi_tiet_don_hang và cập nhật kho
-        foreach ($_SESSION['giohang'] as $id_sp => $so_luong) {
+        foreach ($_SESSION['gio_hang'] as $id_sp => $so_luong) {
             $sql_sp = "SELECT gia_ban FROM san_pham WHERE ma_sp = $id_sp";
             $res_sp = mysqli_query($conn, $sql_sp);
             $row_sp = mysqli_fetch_assoc($res_sp);
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Xóa giỏ hàng sau khi đặt thành công
-        unset($_SESSION['giohang']);
+        unset($_SESSION['gio_hang']);
     } else {
         die("Lỗi đặt hàng: " . mysqli_error($conn));
     }

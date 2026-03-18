@@ -102,7 +102,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <li><a href="index.php" class="<?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">Trang chủ</a></li>
         <li><a href="nam.php" class="<?php echo ($current_page == 'nam.php') ? 'active' : ''; ?>">Nam</a></li>
         <li><a href="nu.php" class="<?php echo ($current_page == 'nu.php') ? 'active' : ''; ?>">Nữ</a></li>
-        <li><a href="lienhe.php" class="<?php echo ($current_page == 'lienhe.php') ? 'active' : ''; ?>">Liên hệ</a></li>
+        <li><a href="lien_he.php" class="<?php echo ($current_page == 'lien_he.php') ? 'active' : ''; ?>">Liên hệ</a></li>
     </ul>
     
     <div class="header-right">
@@ -115,10 +115,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <?php endif; ?>
         </a>
 
-        <a href="giohang.php" class="cart-wrapper">
+        <a href="gio_hang.php" class="cart-wrapper">
             <img src="images/icon-cart.png" alt="Giỏ hàng">
             <?php 
-            $soluong = isset($_SESSION['giohang']) ? array_sum($_SESSION['giohang']) : 0;
+            $soluong = isset($_SESSION['gio_hang']) ? array_sum($_SESSION['gio_hang']) : 0;
             if($soluong > 0) {
                 echo '<span class="cart-count">'.$soluong.'</span>';
             }
