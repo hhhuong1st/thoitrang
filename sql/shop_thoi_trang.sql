@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2026 at 09:48 AM
+-- Generation Time: Mar 18, 2026 at 10:00 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -116,7 +116,8 @@ INSERT INTO `san_pham` (`ma_sp`, `ten_sp`, `gia_ban`, `size`, `so_luong`, `ma_dm
 (2, 'Quần Túi Hộp Nam', 300000.00, 'S', 24, 1, 'quan-tui-hop.jpg'),
 (3, 'Chân Váy Xếp Ly', 250000.00, 'S', 38, 2, 'chan-vay.jpg'),
 (4, 'Áo thun nam', 50000.00, 'M', 0, 1, 'ao-thun-nam.jpg'),
-(5, 'Áo Tank Top', 100000.00, 'S', 1, 2, 'ao-tanktop.png');
+(5, 'Áo Tank Top', 100000.00, 'S', 1, 2, 'ao-tanktop.png'),
+(6, 'Áo Hoodie Nam Tay Dài', 600000.00, 'M', 2, 1, 'ao-hoodie-nam-tay-dai.jpg');
 
 -- --------------------------------------------------------
 
@@ -207,7 +208,7 @@ ALTER TABLE `don_hang`
 -- AUTO_INCREMENT for table `san_pham`
 --
 ALTER TABLE `san_pham`
-  MODIFY `ma_sp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ma_sp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tai_khoan`
