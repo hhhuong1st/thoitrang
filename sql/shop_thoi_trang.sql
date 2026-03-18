@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2026 at 09:35 AM
+-- Generation Time: Mar 18, 2026 at 09:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -42,7 +42,9 @@ CREATE TABLE `chi_tiet_don_hang` (
 
 INSERT INTO `chi_tiet_don_hang` (`ma_ctdh`, `ma_dh`, `ma_sp`, `so_luong`, `gia_ban`, `thanh_tien`) VALUES
 (8, 4, 2, 1, 300000.00, 300000.00),
-(9, 5, 2, 1, 300000.00, 300000.00);
+(9, 5, 2, 1, 300000.00, 300000.00),
+(10, 6, 4, 1, 50000.00, 50000.00),
+(11, 6, 2, 2, 300000.00, 600000.00);
 
 -- --------------------------------------------------------
 
@@ -86,7 +88,8 @@ CREATE TABLE `don_hang` (
 
 INSERT INTO `don_hang` (`ma_dh`, `id_tai_khoan`, `ten_kh`, `dia_chi_kh`, `dien_thoai`, `ngay_dat`, `phuong_thuc_ttoan`, `tong_tien`) VALUES
 (4, 3, 'Huỳnh Huyền Hương', '970', '123', '2026-03-18 14:57:27', 'COD', 300000.00),
-(5, 4, 'haha', '980', '123', '2026-03-18 15:12:47', 'COD', 300000.00);
+(5, 4, 'haha', '980', '123', '2026-03-18 15:12:47', 'COD', 300000.00),
+(6, 4, 'haha', '980', '123', '2026-03-18 15:39:02', 'COD', 650000.00);
 
 -- --------------------------------------------------------
 
@@ -110,9 +113,9 @@ CREATE TABLE `san_pham` (
 
 INSERT INTO `san_pham` (`ma_sp`, `ten_sp`, `gia_ban`, `size`, `so_luong`, `ma_dm`, `hinh_anh`) VALUES
 (1, 'Áo Baby Tee Y2K', 150000.00, 'M', 48, 2, 'ao-baby-tee.jpg'),
-(2, 'Quần Túi Hộp Nam', 300000.00, 'S', 26, 1, 'quan-tui-hop.jpg'),
+(2, 'Quần Túi Hộp Nam', 300000.00, 'S', 24, 1, 'quan-tui-hop.jpg'),
 (3, 'Chân Váy Xếp Ly', 250000.00, 'S', 38, 2, 'chan-vay.jpg'),
-(4, 'Áo thun nam', 50000.00, 'M', 1, 1, 'ao-thun-nam.jpg'),
+(4, 'Áo thun nam', 50000.00, 'M', 0, 1, 'ao-thun-nam.jpg'),
 (5, 'Áo Tank Top', 100000.00, 'S', 1, 2, 'ao-tanktop.png');
 
 -- --------------------------------------------------------
@@ -186,7 +189,7 @@ ALTER TABLE `tai_khoan`
 -- AUTO_INCREMENT for table `chi_tiet_don_hang`
 --
 ALTER TABLE `chi_tiet_don_hang`
-  MODIFY `ma_ctdh` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `ma_ctdh` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `danh_muc`
@@ -198,7 +201,7 @@ ALTER TABLE `danh_muc`
 -- AUTO_INCREMENT for table `don_hang`
 --
 ALTER TABLE `don_hang`
-  MODIFY `ma_dh` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ma_dh` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `san_pham`

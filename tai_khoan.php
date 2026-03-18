@@ -16,7 +16,6 @@ if (isset($_POST['dang_ky'])) {
     if (mysqli_num_rows($check_email) > 0) {
         $thong_bao = "<p style='color: red;'>Email này đã được đăng ký!</p>";
     } else {
-        // Lưu đầy đủ 5 thông tin vào database
         $sql = "INSERT INTO tai_khoan (ho_ten, email, mat_khau, dien_thoai, dia_chi) 
                 VALUES ('$ho_ten', '$email', '$mat_khau', '$sdt', '$dia_chi')";
         if (mysqli_query($conn, $sql)) {
@@ -27,7 +26,7 @@ if (isset($_POST['dang_ky'])) {
     }
 }
 
-// Xử lý Đăng Nhập (Giữ nguyên logic cũ)
+// Xử lý Đăng Nhập
 if (isset($_POST['dang_nhap'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $mat_khau_nhap = $_POST['mat_khau'];
@@ -48,7 +47,7 @@ if (isset($_POST['dang_nhap'])) {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tài khoản - Fashion Shop</title>
+    <title>Tài khoản - Coolmate</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f4; margin: 0; }
         .account-container { max-width: 900px; margin: 50px auto; display: flex; gap: 30px; padding: 0 20px; }
@@ -59,18 +58,73 @@ if (isset($_POST['dang_nhap'])) {
         .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .btn-submit { background: #000; color: white; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
         .btn-submit:hover { background: #4186e0ff; }
-        .profile-box { text-align: center; padding: 50px; background: white; max-width: 600px; margin: 50px auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .btn-logout { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #e74c3c; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
+        
+        /* Profile & Order History */
+        .profile-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .profile-box { text-align: center; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .btn-logout { display: inline-block; margin-top: 15px; padding: 8px 20px; background: #e74c3c; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        
+        .order-history { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .order-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .order-table th, .order-table td { border-bottom: 1px solid #eee; padding: 15px; text-align: left; }
+        .order-table th { background-color: #f9f9f9; color: #333; font-size: 14px; }
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; background: #e1f5fe; color: #01579b; font-weight: bold; }
     </style>
 </head>
 <body>
     <?php include 'menu.php'; ?>
+
     <?php if(isset($_SESSION['user_name'])): ?>
-        <div class="profile-box">
-            <h2>Xin chào, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h2>
-            <p>Chào mừng bạn quay trở lại với cửa hàng.</p>
-            <a href="dang_xuat.php" class="btn-logout">Đăng xuất</a>
+        <div class="profile-container">
+            <div class="profile-box">
+                <img src="images/icon-account.png" style="width: 60px; margin-bottom: 10px;">
+                <h2>Xin chào, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h2>
+                <p style="color: #666;">Chào mừng bạn quay trở lại với Coolmate.</p>
+                <a href="dang_xuat.php" class="btn-logout">Đăng xuất</a>
+            </div>
+
+            <div class="order-history">
+                <h3 style="margin-top: 0; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px;">Lịch sử đơn hàng</h3>
+                <?php
+                $id_user = $_SESSION['user_id'];
+                $sql_orders = "SELECT * FROM don_hang WHERE id_tai_khoan = $id_user ORDER BY ngay_dat DESC";
+                $res_orders = mysqli_query($conn, $sql_orders);
+
+                if (mysqli_num_rows($res_orders) > 0): ?>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while($order = mysqli_fetch_assoc($res_orders)): ?>
+                                <tr>
+                                    <td style="font-weight: bold;">#<?php echo $order['ma_dh']; ?></td>
+                                    <td><?php echo date("d/m/Y H:i", strtotime($order['ngay_dat'])); ?></td>
+                                    <td style="color: #e74c3c; font-weight: bold;"><?php echo number_format($order['tong_tien'], 0, ',', '.'); ?>đ</td>
+                                    <td><span class="status-badge">Đang xử lý</span></td>
+                                    <td>
+                                        <a href="chi_tiet_don_hang.php?id=<?php echo $order['ma_dh']; ?>" 
+                                           style="color: #4186e0; text-decoration: none; font-size: 14px; font-weight: bold;">Xem chi tiết</a>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <div style="text-align: center; padding: 30px; color: #999;">
+                        <p>Bạn chưa có đơn hàng nào.</p>
+                        <a href="index.php" style="color: #4186e0; text-decoration: none;">Mua sắm ngay!</a>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
+
     <?php else: ?>
         <div style="text-align: center; margin-top: 20px;"><?php echo $thong_bao; ?></div>
         <div class="account-container">
@@ -95,6 +149,7 @@ if (isset($_POST['dang_nhap'])) {
             </div>
         </div>
     <?php endif; ?>
+
     <?php include 'footer.php'; ?>
 </body>
 </html>

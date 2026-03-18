@@ -12,7 +12,31 @@ if (!isset($_SESSION['user_id'])) {
 $id_user = $_SESSION['user_id'];
 $user_query = mysqli_query($conn, "SELECT * FROM tai_khoan WHERE id = $id_user");
 $user_data = mysqli_fetch_assoc($user_query);
+// Logic giảm số lượng
+if (isset($_GET['giam_id'])) {
+    $id = $_GET['giam_id'];
+    if ($_SESSION['gio_hang'][$id] > 1) {
+        $_SESSION['gio_hang'][$id] -= 1;
+    } else {
+        unset($_SESSION['gio_hang'][$id]); // Nếu giảm xuống 0 thì xóa khỏi giỏ
+    }
+    header("Location: gio_hang.php"); exit();
+}
 
+// Logic tăng số lượng (có kiểm tra kho)
+if (isset($_GET['tang_id'])) {
+    $id = $_GET['tang_id'];
+    $sql_kho = "SELECT so_luong FROM san_pham WHERE ma_sp = $id";
+    $res_kho = mysqli_query($conn, $sql_kho);
+    $row_kho = mysqli_fetch_assoc($res_kho);
+    
+    if ($_SESSION['gio_hang'][$id] < $row_kho['so_luong']) {
+        $_SESSION['gio_hang'][$id] += 1;
+    } else {
+        echo "<script>alert('Số lượng trong kho đã đạt giới hạn!'); window.location.href = 'gio_hang.php';</script>"; exit();
+    }
+    header("Location: gio_hang.php"); exit();
+}
 // Logic xử lý giỏ hàng (giữ nguyên các phần xóa/thêm)
 if (isset($_GET['xoa_id'])) {
     $id_xoa = $_GET['xoa_id'];
@@ -93,7 +117,23 @@ $tong_cong = 0;
                         <td>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <img src="images/<?php echo $row['hinh_anh']; ?>" class="prod-img">
-                                <div><b><?php echo $row['ten_sp']; ?></b><br><small>SL: <?php echo $so_luong; ?></small></div>
+                                <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+    <span style="font-size: 13px; color: #666;">Số lượng:</span>
+    <div style="display: flex; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+        <a href="gio_hang.php?giam_id=<?php echo $id_sp; ?>" 
+           style="padding: 2px 8px; background: #f8f8f8; text-decoration: none; color: #333; border-right: 1px solid #ddd;">-</a>
+        
+        <span style="padding: 2px 10px; font-size: 14px; background: #fff; min-width: 20px; text-align: center;">
+            <?php echo $so_luong; ?>
+        </span>
+        
+        <a href="gio_hang.php?tang_id=<?php echo $id_sp; ?>" 
+           style="padding: 2px 8px; background: #f8f8f8; text-decoration: none; color: #333; border-left: 1px solid #ddd;">+</a>
+    </div>
+    
+    <a href="gio_hang.php?xoa_id=<?php echo $id_sp; ?>" 
+       style="color: #e74c3c; text-decoration: none; font-size: 12px; margin-left: 10px;">Xóa</a>
+</div>
                             </div>
                         </td>
                         <td style="text-align: right; font-weight: bold;"><?php echo number_format($thanh_tien, 0, ',', '.'); ?>đ</td>
