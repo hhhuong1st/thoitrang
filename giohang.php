@@ -2,47 +2,38 @@
 session_start();
 include 'ket_noi.php';
 
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['user_id'])) {
+    echo "<script>alert('Vui lòng đăng nhập để xem giỏ hàng!'); window.location.href = 'tai_khoan.php';</script>";
+    exit();
+}
+
+// LẤY DỮ LIỆU NGƯỜI DÙNG ĐỂ ĐIỀN FORM
+$id_user = $_SESSION['user_id'];
+$user_query = mysqli_query($conn, "SELECT * FROM tai_khoan WHERE id = $id_user");
+$user_data = mysqli_fetch_assoc($user_query);
+
+// Logic xử lý giỏ hàng (giữ nguyên các phần xóa/thêm)
 if (isset($_GET['xoa_id'])) {
     $id_xoa = $_GET['xoa_id'];
     unset($_SESSION['giohang'][$id_xoa]);
-    header("Location: giohang.php");
-    exit();
+    header("Location: giohang.php"); exit();
 }
-
 if (isset($_GET['xoa']) && $_GET['xoa'] == 'tatca') {
-    unset($_SESSION['giohang']); 
-    header("Location: giohang.php");
-    exit();
+    unset($_SESSION['giohang']); header("Location: giohang.php"); exit();
 }
-
 if (isset($_GET['them_id'])) {
     $id = $_GET['them_id'];
-    $kieu = isset($_GET['kieu']) ? $_GET['kieu'] : 'mua';
-    
     $sql_kho = "SELECT so_luong FROM san_pham WHERE ma_sp = $id";
     $res_kho = mysqli_query($conn, $sql_kho);
     $row_kho = mysqli_fetch_assoc($res_kho);
-    $ton_kho_thuc_te = $row_kho['so_luong'];
-
-    $sl_hien_tai_trong_gio = isset($_SESSION['giohang'][$id]) ? $_SESSION['giohang'][$id] : 0;
-    $sl_muon_them = $sl_hien_tai_trong_gio + 1;
-
-    if ($sl_muon_them > $ton_kho_thuc_te) {
-        echo "<script>
-                alert('Rất tiếc! Trong kho chỉ còn $ton_kho_thuc_te sản phẩm, bạn không thể thêm nữa.');
-                window.location.href = '" . $_SERVER['HTTP_REFERER'] . "';
-              </script>";
-        exit();
+    $sl_muon_them = (isset($_SESSION['giohang'][$id]) ? $_SESSION['giohang'][$id] : 0) + 1;
+    if ($sl_muon_them > $row_kho['so_luong']) {
+        echo "<script>alert('Kho không đủ hàng!'); window.location.href = '".$_SERVER['HTTP_REFERER']."';</script>"; exit();
     } else {
         $_SESSION['giohang'][$id] = $sl_muon_them;
     }
-    
-    if ($kieu == 'them') {
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-    } else {
-        header("Location: giohang.php");
-    }
-    exit();
+    header("Location: giohang.php"); exit();
 }
 
 $tong_cong = 0;
@@ -55,31 +46,20 @@ $tong_cong = 0;
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f4; margin: 0; }
         .main-container { max-width: 1200px; margin: 40px auto; display: flex; gap: 30px; padding: 0 20px; align-items: flex-start; }
-        .col-left { flex: 1; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 20px; }
-        .col-left h3 { margin-top: 0; text-transform: uppercase; font-size: 18px; border-bottom: 1px solid #a8a5a5ff; padding-bottom: 15px; }
+        .col-left { flex: 1; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        .col-right { flex: 1; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 20px; }
-        .col-right h3 { margin-top: 0; text-transform: uppercase; font-size: 18px; border-bottom: 1px solid #a8a5a5ff; padding-bottom: 15px; }
-        .summary-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .summary-table td { padding: 15px 0; border-bottom: 1px solid #f9f9f9; vertical-align: middle; }
-        .prod-info { display: flex; align-items: center; font-size: 14px; gap: 10px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .col-right { flex: 1; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .summary-table { width: 100%; border-collapse: collapse; }
+        .summary-table td { padding: 15px 0; border-bottom: 1px solid #f9f9f9; }
         .prod-img { width: 50px; height: 60px; object-fit: cover; border-radius: 4px; }
-        .total-box { margin-top: 20px; padding-top: 15px; border-top: 2px solid #eee; }
-        .total-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
         .final-price { font-size: 22px; font-weight: bold; color: #e74c3c; }
-        .btn-submit { width: 100%; background: #000; color: white; padding: 18px; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        .empty-cart { text-align: center; padding: 100px; background: white; margin: 40px auto; max-width: 600px; border-radius: 8px; }
-        .btn-remove-item { color: #e74c3c; text-decoration: none; font-size: 18px; transition: 0.3s; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
-        .btn-remove-item:hover { transform: scale(1.2); color: #c0392b; }
-        .prod-row { display: flex; align-items: center; justify-content: space-between; }
-        .prod-details { display: flex; align-items: center; gap: 12px; flex: 2; }
+        .btn-submit { width: 100%; background: #000; color: white; padding: 18px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
     <?php include 'menu.php'; ?>
-
     <?php if (!empty($_SESSION['giohang'])): ?>
     <form action="hoan_tat_thanh_toan.php" method="post">
         <div class="main-container">
@@ -87,82 +67,49 @@ $tong_cong = 0;
                 <h3>Thông tin giao hàng</h3>
                 <div class="form-group">
                     <label>Họ và tên người nhận</label>
-                    <?php 
-                        // Lấy tên từ session nếu đã đăng nhập, nếu chưa thì để trống
-                        $ten_mac_dinh = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; 
-                    ?>
-                    <input type="text" name="ten" value="<?php echo htmlspecialchars($ten_mac_dinh); ?>" placeholder="Nhập đầy đủ họ tên" required>
+                    <input type="text" name="ten" value="<?php echo htmlspecialchars($user_data['ho_ten']); ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Số điện thoại</label>
-                    <input type="text" name="sdt" placeholder="Số điện thoại liên hệ" required>
+                    <input type="text" name="sdt" value="<?php echo htmlspecialchars($user_data['dien_thoai']); ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Địa chỉ chi tiết</label>
-                    <textarea name="dia_chi" rows="3" placeholder="Số nhà, tên đường..." required></textarea>
+                    <textarea name="dia_chi" rows="3" required><?php echo htmlspecialchars($user_data['dia_chi']); ?></textarea>
                 </div>
                 <h3>Thanh toán</h3>
-                <label style="display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 4px; cursor: pointer;">
-                    <input type="radio" name="pttt" value="COD" checked>
-                    <span>Thanh toán khi nhận hàng (COD)</span>
+                <label style="display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 4px;">
+                    <input type="radio" name="pttt" value="COD" checked> <span>Thanh toán khi nhận hàng (COD)</span>
                 </label>
             </div>
-
             <div class="col-right">
                 <h3>Đơn hàng (<?php echo array_sum($_SESSION['giohang']); ?> món)</h3>
                 <table class="summary-table">
-    <?php 
-    foreach ($_SESSION['giohang'] as $id_sp => $so_luong): 
-        $sql = "SELECT * FROM san_pham WHERE ma_sp = $id_sp";
-        $result = mysqli_query($conn, $sql);
-        if ($result && mysqli_num_rows($result) > 0):
-            $row = mysqli_fetch_assoc($result);
-            
-            // Sửa lại đúng Gia_ban chữ G hoa
-            $thanh_tien = $row['Gia_ban'] * $so_luong;
-            $tong_cong += $thanh_tien;
-    ?>
-    <tr>
-        <td>
-            <div class="prod-row">
-                <div class="prod-details">
-                    <a href="giohang.php?xoa_id=<?php echo $id_sp; ?>" class="btn-remove-item" title="Xóa món này" onclick="return confirm('Bạn muốn bỏ sản phẩm này?')">&#128465;</a>
-                    <img src="images/<?php echo $row['hinh_anh']; ?>" class="prod-img">
-                    <div>
-                        <b style="font-size: 14px;"><?php echo $row['ten_sp']; ?></b><br>
-                        <small style="color: #888;">Size: <?php echo $row['size']; ?> | SL: <?php echo $so_luong; ?></small>
-                    </div>
-                </div>
-                <div style="text-align: right; font-weight: bold; flex: 1;">
-                    <?php echo number_format($thanh_tien, 0, ',', '.'); ?>đ
-                </div>
-            </div>
-        </td>
-    </tr>
-    <?php endif; endforeach; ?>
-</table>
-                <div class="total-box">
-                    <div class="total-row"><span>Tạm tính:</span><span><?php echo number_format($tong_cong, 0, ',', '.'); ?>đ</span></div>
-                    <div class="total-row"><span>Phí vận chuyển:</span><span style="color: #28a745;">Miễn phí</span></div>
-                    <div class="total-row" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
-                        <span style="font-weight: bold;">TỔNG CỘNG:</span>
-                        <span class="final-price"><?php echo number_format($tong_cong, 0, ',', '.'); ?>đ</span>
-                    </div>
+                    <?php foreach ($_SESSION['giohang'] as $id_sp => $so_luong): 
+                        $res = mysqli_query($conn, "SELECT * FROM san_pham WHERE ma_sp = $id_sp");
+                        $row = mysqli_fetch_assoc($res);
+                        $thanh_tien = $row['gia_ban'] * $so_luong; $tong_cong += $thanh_tien; ?>
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="images/<?php echo $row['hinh_anh']; ?>" class="prod-img">
+                                <div><b><?php echo $row['ten_sp']; ?></b><br><small>SL: <?php echo $so_luong; ?></small></div>
+                            </div>
+                        </td>
+                        <td style="text-align: right; font-weight: bold;"><?php echo number_format($thanh_tien, 0, ',', '.'); ?>đ</td>
+                    </tr>
+                    <?php endforeach; ?>
+                </table>
+                <div style="margin-top: 20px; text-align: right;">
+                    <p>Tổng cộng: <span class="final-price"><?php echo number_format($tong_cong, 0, ',', '.'); ?>đ</span></p>
                 </div>
                 <button type="submit" class="btn-submit">XÁC NHẬN ĐẶT HÀNG</button>
-                <div style="text-align: center; margin-top: 15px;">
-                    <a href="giohang.php?xoa=tatca" style="color: #e74c3c; font-size: 13px; text-decoration: none;" onclick="return confirm('Xóa sạch giỏ hàng?')">Xóa tất cả</a>
-                </div>
             </div>
         </div>
     </form>
     <?php else: ?>
-        <div class="empty-cart">
-            <p>Giỏ hàng của bạn đang trống.</p>
-            <a href="index.php" style="background: #000; color: white; padding: 15px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">QUAY LẠI MUA SẮM</a>
-        </div>
+        <div style="text-align: center; padding: 100px;">Giỏ hàng trống. <a href="index.php">Tiếp tục mua sắm</a></div>
     <?php endif; ?>
-
     <?php include 'footer.php'; ?>
 </body>
 </html>

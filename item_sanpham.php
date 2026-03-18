@@ -39,9 +39,14 @@
     <p style="margin: 15px 0 5px; font-size: 16px; color: #333;"><b><?php echo $row['ten_sp']; ?></b></p>
     
     <div class='price' style="color: #e74c3c; font-weight: bold; font-size: 18px; margin-bottom: 15px;">
-        <?php echo number_format($row['Gia_ban'], 0, ',', '.'); ?>đ
+        <?php echo number_format($row['gia_ban'], 0, ',', '.'); ?>đ
     </div>
     
-    <a href="giohang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=mua" class="btn-mua">Mua ngay</a>
-    <a href="giohang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=them" class="btn-them" onclick="alert('Đã thêm sản phẩm vào giỏ hàng thành công!')">Thêm vào giỏ hàng</a>
+    <?php if(isset($_SESSION['user_name'])): ?>
+        <a href="giohang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=mua" class="btn-mua">Mua ngay</a>
+        <a href="giohang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=them" class="btn-them" onclick="alert('Đã thêm sản phẩm vào giỏ hàng thành công!')">Thêm vào giỏ hàng</a>
+    <?php else: ?>
+        <a href="tai_khoan.php" class="btn-mua" onclick="alert('Bạn cần đăng nhập để mua sản phẩm này!');">Mua ngay</a>
+        <a href="tai_khoan.php" class="btn-them" onclick="alert('Bạn cần đăng nhập để thêm vào giỏ hàng!');">Thêm vào giỏ hàng</a>
+    <?php endif; ?>
 </div>
