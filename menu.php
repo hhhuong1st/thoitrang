@@ -17,8 +17,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
         padding: 10px 50px; 
         background: white; 
         border-bottom: 1px solid #eee;
-        position: relative; 
+        position: sticky; 
+        top: 0;
+        z-index: 1000;
         height: 60px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     
     /* Logo bên trái */
@@ -108,6 +111,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
     
     <div class="header-right">
         <input type="text" class="search-box" placeholder="Tìm kiếm...">
+
+        <a href="admin_dashboard.php" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: #e74c3c; font-weight: bold; font-size: 14px; border: 1px solid #e74c3c; padding: 5px 10px; border-radius: 20px; transition: 0.3s;">
+            <span>ADMIN</span>
+        </a>
 
         <a href="tai_khoan.php" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: #333; font-weight: bold; font-size: 14px;">
             <img src="images/icon-account.png" alt="Tài khoản" title="Tài khoản của tôi">
