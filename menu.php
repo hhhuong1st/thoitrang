@@ -102,6 +102,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <li><a href="index.php" class="<?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">Trang chủ</a></li>
         <li><a href="nam.php" class="<?php echo ($current_page == 'nam.php') ? 'active' : ''; ?>">Nam</a></li>
         <li><a href="nu.php" class="<?php echo ($current_page == 'nu.php') ? 'active' : ''; ?>">Nữ</a></li>
+        <li><a href="thong_ke_truy_cap.php" class="<?php echo ($current_page == 'thong_ke_truy_cap.php') ? 'active' : ''; ?>">Thống kê</a></li>
         <li><a href="lien_he.php" class="<?php echo ($current_page == 'lien_he.php') ? 'active' : ''; ?>">Liên hệ</a></li>
     </ul>
     
