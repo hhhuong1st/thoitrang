@@ -11,8 +11,13 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['id'])) {
 $ma_dh = mysqli_real_escape_string($conn, $_GET['id']);
 $id_user = $_SESSION['user_id'];
 
-// 2. Lấy thông tin chung của đơn hàng (để đảm bảo đúng chủ sở hữu đơn hàng)
-$sql_dh = "SELECT * FROM don_hang WHERE ma_dh = $ma_dh AND id_tai_khoan = $id_user";
+// 2. Lấy thông tin chung của đơn hàng
+$is_admin = isset($_GET['admin']) && $_GET['admin'] == 1 && isset($_SESSION['role']) && $_SESSION['role'] == 1;
+if ($is_admin) {
+    $sql_dh = "SELECT * FROM don_hang WHERE ma_dh = $ma_dh";
+} else {
+    $sql_dh = "SELECT * FROM don_hang WHERE ma_dh = $ma_dh AND id_tai_khoan = $id_user";
+}
 $res_dh = mysqli_query($conn, $sql_dh);
 $order_info = mysqli_fetch_assoc($res_dh);
 
@@ -48,7 +53,13 @@ if (!$order_info) {
         
         <div class="order-header">
             <h2 style="margin:0;">Chi tiết đơn hàng #<?php echo $ma_dh; ?></h2>
-            <span style="background: #e1f5fe; color: #01579b; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;">Đang xử lý</span>
+            <?php 
+                $tt = isset($order_info['trang_thai']) ? (int)$order_info['trang_thai'] : 0;
+                if ($tt == 0) echo '<span style="background:#fff3cd; color:#856404; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;">Chờ xác nhận</span>';
+                elseif ($tt == 1) echo '<span style="background:#cce5ff; color:#004085; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;">Đang giao hàng</span>';
+                elseif ($tt == 2) echo '<span style="background:#d4edda; color:#155724; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;">Hoàn thành</span>';
+                elseif ($tt == 3) echo '<span style="background:#f8d7da; color:#721c24; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;">Đã hủy</span>';
+            ?>
         </div>
 
         <div class="info-grid">

@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 1) {
+    header("Location: index.php");
+    exit();
+}
 include 'ket_noi.php';
 
 // Lấy số liệu truy cập hôm nay
@@ -65,6 +69,7 @@ if ($count_total == null) $count_total = 0;
         <ul class="nav-links">
             <li><a href="admin_dashboard.php">❖ Bảng Điều Khiển</a></li>
             <li><a href="admin_sanpham.php">✧ Quản Lý Sản Phẩm</a></li>
+            <li><a href="admin_donhang.php">🛒 Quản Lý Đơn Hàng</a></li>
             <li><a href="thong_ke_truy_cap.php" class="active">📊 Thống Kê Truy Cập</a></li>
             <li><a href="index.php" target="_blank">🌐 Xem Trang Web</a></li>
         </ul>

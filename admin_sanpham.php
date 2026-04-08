@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 1) {
+    header("Location: index.php");
+    exit();
+}
 include 'ket_noi.php';
 
 // 1. XỬ LÝ XÓA SẢN PHẨM
@@ -134,6 +138,7 @@ if (isset($_POST['them_sp'])) {
         <ul class="nav-links">
             <li><a href="admin_dashboard.php">❖ Bảng Điều Khiển</a></li>
             <li><a href="admin_sanpham.php" class="active">✧ Quản Lý Sản Phẩm</a></li>
+            <li><a href="admin_donhang.php">🛒 Quản Lý Đơn Hàng</a></li>
             <li><a href="thong_ke_truy_cap.php">📊 Thống Kê Truy Cập</a></li>
             <li><a href="index.php" target="_blank">🌐 Xem Trang Web</a></li>
         </ul>

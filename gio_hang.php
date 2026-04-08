@@ -33,7 +33,8 @@ if (isset($_GET['tang_id'])) {
     if ($_SESSION['gio_hang'][$id] < $row_kho['so_luong']) {
         $_SESSION['gio_hang'][$id] += 1;
     } else {
-        echo "<script>alert('Số lượng trong kho đã đạt giới hạn!'); window.location.href = 'gio_hang.php';</script>"; exit();
+        $_SESSION['toast_error'] = 'Số lượng trong kho đã đạt giới hạn!'; 
+        header("Location: gio_hang.php"); exit();
     }
     header("Location: gio_hang.php"); exit();
 }
@@ -53,11 +54,24 @@ if (isset($_GET['them_id'])) {
     $row_kho = mysqli_fetch_assoc($res_kho);
     $sl_muon_them = (isset($_SESSION['gio_hang'][$id]) ? $_SESSION['gio_hang'][$id] : 0) + 1;
     if ($sl_muon_them > $row_kho['so_luong']) {
-        echo "<script>alert('Kho không đủ hàng!'); window.location.href = '".$_SERVER['HTTP_REFERER']."';</script>"; exit();
+        if(isset($_GET['ajax'])) { echo json_encode(['status'=>'error', 'msg'=>'Kho không đủ hàng!']); exit(); }
+        $_SESSION['toast_error'] = 'Kho không đủ hàng!';
+        $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
+        header("Location: " . $referer);
+        exit();
     } else {
         $_SESSION['gio_hang'][$id] = $sl_muon_them;
     }
-    header("Location: gio_hang.php"); exit();
+    
+    if (isset($_GET['kieu']) && $_GET['kieu'] == 'them') {
+        if(isset($_GET['ajax'])) { echo json_encode(['status'=>'success', 'msg'=>'Đã thêm!', 'cart_total'=>array_sum($_SESSION['gio_hang'])]); exit(); }
+        $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
+        $_SESSION['toast_success'] = 'Đã thêm sản phẩm vào giỏ hàng thành công!';
+        header("Location: " . $referer);
+    } else {
+        header("Location: gio_hang.php");
+    }
+    exit();
 }
 
 $tong_cong = 0;

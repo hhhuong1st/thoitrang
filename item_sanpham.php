@@ -45,29 +45,60 @@
         margin-bottom: 10px;
         display: block;
     }
+    .product-item {
+        background: white; 
+        padding: 15px; 
+        text-align: center; 
+        box-sizing: border-box; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+        border-radius: 8px; 
+        position: relative;
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .product-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .product-info {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .button-group {
+        margin-top: auto;
+    }
 </style>
 
-<div class='product-item' style="background: white; padding: 15px; text-align: center; width: calc(25% - 20px); box-sizing: border-box; box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-radius: 8px; position: relative;">
+<div class='product-item'>
     
     <img src='images/<?php echo $row['hinh_anh']; ?>' 
          style="width: 100%; height: 280px; object-fit: cover; border-radius: 4px; <?php echo ($row['so_luong'] <= 0) ? 'filter: grayscale(100%); opacity: 0.6;' : ''; ?>">
     
-    <p style="margin: 15px 0 5px; font-size: 16px; color: #333;"><b><?php echo $row['ten_sp']; ?></b></p>
-    
-    <div class='price' style="color: #e74c3c; font-weight: bold; font-size: 18px; margin-bottom: 15px;">
-        <?php echo number_format($row['gia_ban'], 0, ',', '.'); ?>đ
+    <div class="product-info">
+        <p style="margin: 15px 0 5px; font-size: 16px; color: #333; min-height: 48px; display: flex; align-items: center; justify-content: center;">
+            <b><?php echo $row['ten_sp']; ?></b>
+        </p>
+        
+        <div class='price' style="color: #e74c3c; font-weight: bold; font-size: 18px; margin-bottom: 15px;">
+            <?php echo number_format($row['gia_ban'], 0, ',', '.'); ?>đ
+        </div>
     </div>
     
-    <?php if ($row['so_luong'] > 0): ?>
-        <?php if(isset($_SESSION['user_name'])): ?>
-            <a href="gio_hang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=mua" class="btn-mua">Mua ngay</a>
-            <a href="gio_hang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=them" class="btn-them" onclick="alert('Đã thêm sản phẩm vào giỏ hàng thành công!')">Thêm vào giỏ hàng</a>
+    <div class="button-group">
+        <?php if ($row['so_luong'] > 0): ?>
+            <?php if(isset($_SESSION['user_name'])): ?>
+                <a href="gio_hang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=mua" class="btn-mua">Mua ngay</a>
+                <a href="javascript:void(0);" onclick="addToCartAjax('gio_hang.php?them_id=<?php echo $row['ma_sp']; ?>&kieu=them')" class="btn-them">Thêm vào giỏ hàng</a>
+            <?php else: ?>
+                <a href="tai_khoan.php" class="btn-mua" onclick="alert('Bạn cần đăng nhập để mua sản phẩm này!');">Mua ngay</a>
+                <a href="tai_khoan.php" class="btn-them" onclick="alert('Bạn cần đăng nhập để thêm vào giỏ hàng!');">Thêm vào giỏ hàng</a>
+            <?php endif; ?>
         <?php else: ?>
-            <a href="tai_khoan.php" class="btn-mua" onclick="alert('Bạn cần đăng nhập để mua sản phẩm này!');">Mua ngay</a>
-            <a href="tai_khoan.php" class="btn-them" onclick="alert('Bạn cần đăng nhập để thêm vào giỏ hàng!');">Thêm vào giỏ hàng</a>
+            <span class="out-of-stock-label">TẠM HẾT HÀNG</span>
+            <div class="het-hang">Ngừng nhận đơn</div>
         <?php endif; ?>
-    <?php else: ?>
-        <span class="out-of-stock-label">TẠM HẾT HÀNG</span>
-        <div class="het-hang">Ngừng nhận đơn</div>
-    <?php endif; ?>
+    </div>
 </div>
