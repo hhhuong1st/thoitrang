@@ -43,9 +43,13 @@ if (isset($_POST['dang_nhap'])) {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['user_name'] = $row['ho_ten'];
             $_SESSION['role'] = isset($row['vai_tro']) ? (int)$row['vai_tro'] : 0;
+<<<<<<< HEAD
             
             // Chuyển hướng sang trang chủ sau khi đăng nhập thành công
             header("Location: index.php"); 
+=======
+            header("Location: tai_khoan.php");
+>>>>>>> 1ebfbd2e0887bf13cad1987957d0f38989a201a3
             exit();
         } else { 
             $thong_bao = "<p style='color: red;'>Sai mật khẩu!</p>"; 
