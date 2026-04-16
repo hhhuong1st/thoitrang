@@ -15,7 +15,7 @@ include 'ket_noi.php';
     <div class="container" style="max-width: 1200px; margin: 50px auto; padding: 0 20px;">
         <h2 style="text-align: center; margin-bottom: 40px; font-size: 30px;">THỜI TRANG NAM</h2>
         
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: flex-start;">
+        <div class="product-grid">
             <?php
             $result = mysqli_query($conn, "SELECT * FROM san_pham WHERE ma_dm = 1");
             if (mysqli_num_rows($result) > 0) {

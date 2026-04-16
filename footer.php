@@ -3,7 +3,7 @@
         background-color: #222;
         color: #fff;
         padding: 40px 50px;
-        margin-top: 50px;
+        margin-top: auto;
         font-size: 14px;
     }
     .footer-container {
@@ -60,7 +60,7 @@
         </div>
         <div class="footer-column">
             <h4>Đăng ký nhận tin</h4>
-            <input type="text" placeholder="Email của bạn..." style="padding: 8px; width: 80%; border: none; border-radius: 4px;">
+            <input type="text" class="email-input" placeholder="Email của bạn...">
         </div>
     </div>
     <div class="footer-bottom">

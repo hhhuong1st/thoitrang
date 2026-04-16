@@ -30,17 +30,29 @@ if (isset($_POST['dang_ky'])) {
 if (isset($_POST['dang_nhap'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $mat_khau_nhap = $_POST['mat_khau'];
+
     $sql = "SELECT * FROM tai_khoan WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
+
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
-        if (password_verify($mat_khau_nhap, $row['mat_khau'])) {
+        $pass_db = $row['mat_khau'];
+
+        // Kiểm tra mật khẩu (Hỗ trợ cả Bcrypt và MD5)
+        if (password_verify($mat_khau_nhap, $pass_db) || md5($mat_khau_nhap) == $pass_db) {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['user_name'] = $row['ho_ten'];
-            header("Location: tai_khoan.php");
+            $_SESSION['role'] = isset($row['vai_tro']) ? (int)$row['vai_tro'] : 0;
+            
+            // Chuyển hướng sang trang chủ sau khi đăng nhập thành công
+            header("Location: index.php"); 
             exit();
-        } else { $thong_bao = "<p style='color: red;'>Sai mật khẩu!</p>"; }
-    } else { $thong_bao = "<p style='color: red;'>Email không tồn tại!</p>"; }
+        } else { 
+            $thong_bao = "<p style='color: red;'>Sai mật khẩu!</p>"; 
+        }
+    } else { 
+        $thong_bao = "<p style='color: red;'>Email không tồn tại!</p>"; 
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -77,10 +89,15 @@ if (isset($_POST['dang_nhap'])) {
     <?php if(isset($_SESSION['user_name'])): ?>
         <div class="profile-container">
             <div class="profile-box">
-                <img src="images/icon-account.png" style="width: 60px; margin-bottom: 10px;">
+                <img src="images/account-after.png" style="height: 60px; margin-bottom: 10px;">
                 <h2>Xin chào, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h2>
-                <p style="color: #666;">Chào mừng bạn quay trở lại với Coolmate.</p>
-                <a href="dang_xuat.php" class="btn-logout">Đăng xuất</a>
+                <p style="color: #666;">Chào mừng bạn quay trở lại với gian hàng Thời Trang.</p>
+                <div style="margin-top: 15px; display: flex; gap: 15px; justify-content: center;">
+                    <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 1): ?>
+                    <a href="admin_dashboard.php" style="padding: 10px 20px; background: #e74c3c; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">Quản trị hệ thống (Admin)</a>
+                    <?php endif; ?>
+                    <a href="dang_xuat.php" style="padding: 10px 20px; background: #555; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">Đăng xuất</a>
+                </div>
             </div>
 
             <div class="order-history">
@@ -107,7 +124,16 @@ if (isset($_POST['dang_nhap'])) {
                                     <td style="font-weight: bold;">#<?php echo $order['ma_dh']; ?></td>
                                     <td><?php echo date("d/m/Y H:i", strtotime($order['ngay_dat'])); ?></td>
                                     <td style="color: #e74c3c; font-weight: bold;"><?php echo number_format($order['tong_tien'], 0, ',', '.'); ?>đ</td>
-                                    <td><span class="status-badge">Đang xử lý</span></td>
+                                    <td>
+                                        <?php 
+                                            // 0: Chờ xác nhận, 1: Đang giao, 2: Hoàn thành, 3: Đã hủy
+                                            $tt = isset($order['trang_thai']) ? (int)$order['trang_thai'] : 0;
+                                            if ($tt == 0) echo '<span class="status-badge" style="background:#fff3cd; color:#856404;">Chờ xác nhận</span>';
+                                            elseif ($tt == 1) echo '<span class="status-badge" style="background:#cce5ff; color:#004085;">Đang giao hàng</span>';
+                                            elseif ($tt == 2) echo '<span class="status-badge" style="background:#d4edda; color:#155724;">Hoàn thành</span>';
+                                            elseif ($tt == 3) echo '<span class="status-badge" style="background:#f8d7da; color:#721c24;">Đã hủy</span>';
+                                        ?>
+                                    </td>
                                     <td>
                                         <a href="chi_tiet_don_hang.php?id=<?php echo $order['ma_dh']; ?>" 
                                            style="color: #4186e0; text-decoration: none; font-size: 14px; font-weight: bold;">Xem chi tiết</a>
